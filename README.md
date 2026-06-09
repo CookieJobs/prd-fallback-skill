@@ -114,6 +114,14 @@ prd-fallback/
     └── xml-templates.md            # 飞书 callout XML 模板（黄/红/绿三色）
 ```
 
+## 更新
+
+```bash
+cd ~/.claude/skills/prd-fallback && git pull
+```
+
+拉取后重启 Claude Code，新版本自动加载。
+
 ## 注意事项
 
 - 技能需要对飞书文档有**编辑权限**（读写权限）才能插入 callout 块
