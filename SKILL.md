@@ -59,11 +59,11 @@ lark-cli docs +fetch --api-version v2 --doc "<URL>" --scope all
 
 对每个确认的条目：
 
-1. **生成唯一 ID**：生成一个 4 字符小写十六进制字符串（字符范围：0-9, a-f）。先搜索文档已有内容，确认 `FB-` 后的 4 字符没有与已有 ID 重复。格式：`FB-xxxx`（如 `FB-a3f7`）。
+1. **生成唯一 ID**：生成一个 4 字符小写十六进制字符串（字符范围：0-9, a-f）。先搜索文档已有内容，确认 `FB` 后的 4 字符没有与已有 ID 重复。格式：`FBxxxx`（如 `FBa3f7`）。
 
 2. **选择模板颜色**：按 `references/xml-templates.md` 的颜色决策表选择 yellow / red / green。callout 颜色须与预览摘要（第 3 步）中该条目的 emoji 颜色一致（🔴 = red，🟡 = yellow，💡 = green）。
 
-3. **填充内容**：将 JSON 中的 `trigger`、`option_a`、`option_b`、`option_c`（如有）填入对应模板，替换 `FB-XXXX` 占位符为生成的 ID。
+3. **填充内容**：将 JSON 中的 `trigger`、`option_a`、`option_b`、`option_c`（如有）填入对应模板，替换 `FBxxxx` 占位符为生成的 ID。
 
 4. 方案描述要求：详细、用户感知视角，包含界面文案、状态变化、后续可操作路径。如 JSON 中的方案描述已经足够详细，直接使用；如过于简短，适当扩写。
 
@@ -82,7 +82,7 @@ lark-cli docs +update --api-version v2 --doc "<URL>" \
   --command block_insert_after \
   --block-id "<目标段落的 block ID>" \
   --content '<callout emoji="🔍" background-color="light-yellow" border-color="yellow">
-  <p><b>兜底建议</b> · 选定方案后删除其余方案行　<code>FB-xxxx</code></p>
+  <p><b>兜底建议</b> · 选定方案后删除其余方案行　<code>FBxxxx</code></p>
   <p>⚠️ <b>触发场景：</b>...</p>
   <p><b>方案 A</b>　...</p>
   <p><b>方案 B</b>　...</p>
@@ -100,28 +100,28 @@ PM 操作指引：
 - 🔴 红色块 = 高风险，必须处理；🟡 黄色块 = 建议处理；💡 绿色块 = 体验优化，可选
 - 在每个高亮块中选择一个方案，删除其余方案行
 - 对绿色（💡）建议块，可直接删除整块（体验建议，非必须）
-- 若某个建议需要修改，复制块 ID（如 FB-a3f7）后在对话中告知我
+- 若某个建议需要修改，复制块 ID（如 FBa3f7）后在对话中告知我
 ```
 
 ---
 
 ## 路径 B：精修某个 callout 块
 
-当 PM 提供一个 FB-xxxx ID 并说明修改方向时（无需特殊命令，自然对话触发）：
+当 PM 提供一个 FBxxxx ID 并说明修改方向时（无需特殊命令，自然对话触发）：
 
 > **前提：** 若 PM 未在当前会话中提供文档链接，先询问「请提供 PRD 的飞书文档链接」，获得 URL 后再继续执行以下步骤。
 
 ### 第 1 步：定位目标块
 
 ```bash
-lark-cli docs +fetch --api-version v2 --doc "<URL>" --detail with-ids --scope keyword --keyword "FB-xxxx"
+lark-cli docs +fetch --api-version v2 --doc "<URL>" --detail with-ids --scope keyword --keyword "FBxxxx"
 ```
 
 读取包含该 ID 的 callout 块的当前内容和 block ID。
 
 ### 第 2 步：重写内容
 
-根据 PM 的反馈方向重新生成方案，保持 `FB-xxxx` ID 不变，只更新文字内容。
+根据 PM 的反馈方向重新生成方案，保持 `FBxxxx` ID 不变，只更新文字内容。
 
 ### 第 3 步：替换块
 
@@ -134,7 +134,7 @@ lark-cli docs +update --api-version v2 --doc "<URL>" \
 
 ### 边界情况
 
-- ID 不存在：提示「未找到 FB-xxxx，请确认 ID 是否正确，或提供文档链接」
+- ID 不存在：提示「未找到 FBxxxx，请确认 ID 是否正确，或提供文档链接」
 - PM 只想讨论方案，不写回文档：直接对话，询问确认后再写入
 - 文档已被大幅修改导致 fetch 失败：要求 PM 重新提供文档链接
 
@@ -143,6 +143,6 @@ lark-cli docs +update --api-version v2 --doc "<URL>" \
 ## 注意事项
 
 - 插入顺序：**始终从文档末尾往前插入**，避免 block ID 偏移导致后续插入位置错误
-- 不重复插入：每次执行前，先检查文档中已有的 `FB-` 模式，已有兜底建议的位置跳过
+- 不重复插入：每次执行前，先检查文档中已有的 `FB` 模式，已有兜底建议的位置跳过
 - callout 内只能使用 `<p>` 块，不能使用 `<h1>` `<ul>` 等其他块类型
 - 批量插入中若某次 `block_insert_after` 返回错误，记录该条目编号，继续执行其余插入；全部完成后统一向 PM 报告「第 X 条插入失败（block ID: xxx），请手动处理」，不静默丢弃
